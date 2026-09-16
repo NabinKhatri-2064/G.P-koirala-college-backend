@@ -9,6 +9,11 @@ const optionalNestDependencies = [
   /^class-validator(?:\/|$)/,
 ];
 
+const neverBundleDependencies = [
+  /^bcrypt(?:\/|$)/,
+  ...optionalNestDependencies,
+];
+
 export default defineConfig({
   entry: { server: "src/main.ts" },
   platform: "node",
@@ -23,7 +28,7 @@ export default defineConfig({
     onlyBundle: false,
     alwaysBundle: (id) =>
       !isBuiltin(id) &&
-      !optionalNestDependencies.some((pattern) => pattern.test(id)),
-    neverBundle: optionalNestDependencies,
+      !neverBundleDependencies.some((pattern) => pattern.test(id)),
+    neverBundle: neverBundleDependencies,
   },
 });
