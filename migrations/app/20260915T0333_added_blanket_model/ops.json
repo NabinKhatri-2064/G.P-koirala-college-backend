@@ -1,0 +1,41 @@
+[
+  {
+    "id": "table.blanket",
+    "label": "Create table \"blanket\"",
+    "summary": "Creates table \"blanket\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "blanket"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"blanket\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"blanket\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"blanket\"",
+        "sql": "CREATE TABLE \"public\".\"blanket\" (\n  \"id\" SERIAL NOT NULL,\n  \"name\" text NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"blanket\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"blanket\""
+        ]
+      }
+    ]
+  }
+]

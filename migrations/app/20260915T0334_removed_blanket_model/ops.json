@@ -1,0 +1,39 @@
+[
+  {
+    "id": "dropTable.blanket",
+    "label": "Drop table \"blanket\"",
+    "operationClass": "destructive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "blanket"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"blanket\" exists",
+        "sql": "SELECT (to_regclass($1)) IS NOT NULL AS \"result\"",
+        "params": [
+          "\"public\".\"blanket\""
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "drop table \"blanket\"",
+        "sql": "DROP TABLE \"public\".\"blanket\""
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"blanket\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"blanket\""
+        ]
+      }
+    ]
+  }
+]
