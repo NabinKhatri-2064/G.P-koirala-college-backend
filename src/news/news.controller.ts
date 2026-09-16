@@ -19,9 +19,8 @@ import { roleguard } from "../auth/roles.guard";
 export class NewsController {
   constructor(@Inject(NewsService) private readonly news: NewsService) {}
 
-
   @Roles("ADMIN")
-  @UseGuards(authguard,roleguard)
+  @UseGuards(authguard, roleguard)
   @Post()
   @UseInterceptors(FileInterceptor("image"))
   async addnews(
@@ -32,23 +31,17 @@ export class NewsController {
       throw new Error("News Fields cannot be empty");
     }
     const result = await this.news.addnews(news, image);
-    console.log(news,image)
-    return result
+    console.log(news, image);
+    return result;
   }
 
-
   @Get()
-  async getnews()
-  {
+  async getnews() {
     const News = this.news.getnews();
-    if(!News)
-    {
-      throw new Error("News not found!")
+    if (!News) {
+      throw new Error("News not found!");
     }
 
     return News;
-
   }
-
-
 }
