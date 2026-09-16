@@ -15,7 +15,7 @@ export class AdminController {
         const res = response.cookie("access_token", token.access_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
+        sameSite: process.env.NODE_ENV=== "production" ? "none" :"lax",
         maxAge: 15 * 60 * 1000,
         });
 
