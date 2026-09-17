@@ -1,27 +1,45 @@
-import { Body, Controller, Inject, Post, Res } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Post,
+  Req,
+  Res,
+  UseGuards,
+} from "@nestjs/common";
 import { AdminService } from "./admin.service";
 import type { admindto } from "./admindto/admin.dto";
-import {  type Response } from "express";
+import { authguard } from "../auth/auth.guard";
+import { roleguard } from "../auth/roles.guard";
+import { Roles } from "../custom/decorators/roles.decorator";
+import type { Request } from "express";
+
+type AuthenticatedRequest = Request & {
+  user: {
+    sub: number;
+    username: string;
+    role: string;
+  };
+};
 
 @Controller("admin")
 export class AdminController {
   constructor(@Inject(AdminService) private readonly admin: AdminService) {}
 
   @Post("/login")
-  async login(@Body() admincredentials: admindto , @Res({passthrough: true}) response:Response) {
-    console.log(admincredentials);
+  async login(@Body() admincredentials: admindto) {
     const token = await this.admin.adminlogin(admincredentials);
 
-        const res = response.cookie("access_token", token.access_token, {
-        httpOnly: true,
-        secure: true  ,
-        sameSite: "none",
-        maxAge: 15 * 60 * 1000,
-        });
+    return {
+      message: "Login Successfully",
+      access_token: token.access_token,
+    };
+  }
 
-
-        return {
-        message: "Login Successfully",
-        };
-    }
-    }
+  @Get("/verify")
+  @UseGuards(authguard)
+  verifyAdmin(@Req() request: AuthenticatedRequest) {
+    return request.user;
+  }
+}

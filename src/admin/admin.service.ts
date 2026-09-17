@@ -1,4 +1,9 @@
-import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from "@nestjs/common";
 import bcrypt from "bcrypt";
 import { PrismaService } from "../prisma.service";
 import { JwtService } from "@nestjs/jwt";
@@ -8,7 +13,7 @@ import type { admindto } from "./admindto/admin.dto";
 export class AdminService {
   constructor(
     @Inject(PrismaService) private readonly prisma: PrismaService,
-    @Inject(JwtService) private readonly jwt:JwtService
+    @Inject(JwtService) private readonly jwt: JwtService,
   ) {}
 
   async adminlogin(admincredentials: admindto) {
@@ -44,7 +49,7 @@ export class AdminService {
     };
 
     return {
-      access_token: await this.jwt.signAsync(payload)
+      access_token: await this.jwt.signAsync(payload),
     };
   }
 }
