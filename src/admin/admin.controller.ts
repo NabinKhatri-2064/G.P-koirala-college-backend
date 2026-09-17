@@ -13,7 +13,7 @@ import type { admindto } from "./admindto/admin.dto";
 import { authguard } from "../auth/auth.guard";
 import { roleguard } from "../auth/roles.guard";
 import { Roles } from "../custom/decorators/roles.decorator";
-import type { Request } from "express";
+import type { Request, Response } from "express";
 
 type AuthenticatedRequest = Request & {
   user: {
@@ -28,18 +28,29 @@ export class AdminController {
   constructor(@Inject(AdminService) private readonly admin: AdminService) {}
 
   @Post("/login")
-  async login(@Body() admincredentials: admindto) {
+  async login(
+    @Body() admincredentials: admindto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
     const token = await this.admin.adminlogin(admincredentials);
+
+    response.cookie("access_token", token.access_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 15 * 60 * 1000,
+      path: "/",
+    });
 
     return {
       message: "Login Successfully",
-      access_token: token.access_token,
     };
   }
 
   @Get("/verify")
-  @UseGuards(authguard)
+  @Roles("ADMIN")
+  @UseGuards(authguard, roleguard)
   verifyAdmin(@Req() request: AuthenticatedRequest) {
-    return request.user;
+    return this.admin.verifyAdmin(request.user);
   }
 }

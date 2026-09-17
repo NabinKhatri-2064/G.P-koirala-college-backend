@@ -52,4 +52,24 @@ export class AdminService {
       access_token: await this.jwt.signAsync(payload),
     };
   }
+
+  async verifyAdmin(user: {
+    sub: number;
+    username: string;
+    role: string;
+  }) {
+    const admin = await this.prisma.db.orm.public.User.where({
+      id: user.sub,
+    }).first();
+
+    if (!admin || admin.role !== "ADMIN") {
+      throw new UnauthorizedException("Admin account is not valid");
+    }
+
+    return {
+      sub: admin.id,
+      username: admin.username,
+      role: admin.role,
+    };
+  }
 }
