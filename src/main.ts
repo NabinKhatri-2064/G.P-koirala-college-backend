@@ -9,7 +9,7 @@
   async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     app.enableCors({
-      origin: "http://localhost:3000",
+      origin: "https://gpkmc.nabinkhatri64.com.np",
       credentials: true,
       allowedHeaders : ['Content-Type','Authorization'],
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
